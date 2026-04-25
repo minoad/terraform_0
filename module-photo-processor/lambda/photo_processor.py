@@ -6,7 +6,14 @@ from urllib.parse import unquote_plus
 import boto3
 
 
-dynamodb = boto3.resource("dynamodb")
+def get_dynamodb_resource():
+    region = os.environ.get("AWS_REGION") or os.environ.get(
+        "AWS_DEFAULT_REGION") or "us-east-1"
+    endpoint = os.environ.get("AWS_ENDPOINT_URL_DYNAMODB")
+    kwargs = {"region_name": region}
+    if endpoint:
+        kwargs["endpoint_url"] = endpoint
+    return boto3.resource("dynamodb", **kwargs)
 
 
 def _first_photo(event):
@@ -31,6 +38,7 @@ def _first_photo(event):
 
 
 def handler(event, context):
+    dynamodb = get_dynamodb_resource()
     table = dynamodb.Table(os.environ["METADATA_TABLE_NAME"])
     photo = _first_photo(event)
 
