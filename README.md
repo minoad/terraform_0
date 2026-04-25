@@ -85,6 +85,12 @@ terraform apply
 awslocal s3 ls
 ```
 
+This repo now starts here, with the root Terraform configuration creating:
+
+- `incoming-photos`
+- `processed-photos`
+- `photo_metadata`
+
 ### Level 2: Database
 
 Add a DynamoDB table named `photo_metadata`.
