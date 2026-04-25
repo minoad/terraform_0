@@ -52,6 +52,23 @@ def handler(event, context):
 
     table.put_item(Item=item)
 
+    # Publish notification to SNS
+    sns_topic_arn = os.environ.get("SNS_TOPIC_ARN")
+    if sns_topic_arn:
+        import boto3
+        sns = boto3.client("sns", **({"region_name": os.environ.get("AWS_REGION") or os.environ.get("AWS_DEFAULT_REGION") or "us-east-1",
+                                      "endpoint_url": os.environ.get("AWS_ENDPOINT_URL_SNS")} if os.environ.get("AWS_ENDPOINT_URL_SNS") else {}))
+        sns.publish(
+            TopicArn=sns_topic_arn,
+            Message=json.dumps({
+                "photo_id": photo["photo_id"],
+                "filename": photo["filename"],
+                "status": "processed",
+                "timestamp": item["uploaded_at"]
+            }),
+            Subject="Photo Processed"
+        )
+
     return {
         "statusCode": 200,
         "body": json.dumps(

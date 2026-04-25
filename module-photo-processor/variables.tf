@@ -23,3 +23,15 @@ variable "force_destroy_buckets" {
   type        = bool
   default     = false
 }
+
+variable "sns_topic_name" {
+  description = "Name of the SNS topic for photo processing notifications."
+  type        = string
+  default     = "photo-processed"
+}
+
+variable "sqs_queue_name" {
+  description = "Name of the SQS queue for photo notifications."
+  type        = string
+  default     = "photo-notifications"
+}

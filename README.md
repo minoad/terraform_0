@@ -163,6 +163,8 @@ Practice:
 - Wiring resources together with ARNs and URLs
 - Adding outputs that make local testing easier
 
+This repo now has SNS publishing photo notifications and SQS subscribing to them! The Lambda publishes to SNS after processing, and messages are delivered to the SQS queue.
+
 ### Level 6: More Modules
 
 The project now has one focused module, `module-photo-processor`. Later, you can split it further if the boundaries start to feel useful:
