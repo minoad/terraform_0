@@ -24,7 +24,7 @@ output "local_test_commands" {
     list_buckets     = "awslocal --region ${var.aws_region} s3 ls"
     list_tables      = "awslocal --region ${var.aws_region} dynamodb list-tables"
     list_functions   = "awslocal --region ${var.aws_region} lambda list-functions"
-    invoke_processor = "awslocal --region ${var.aws_region} lambda invoke --function-name ${module.photo_processor.lambda_function_name} --payload '{\"photo_id\":\"manual-test\",\"filename\":\"sample-photo.txt\"}' --cli-binary-format raw-in-base64-out response.json"
-    upload_file      = "awslocal --region ${var.aws_region} s3 cp ..\\sample-photo.txt s3://${module.photo_processor.incoming_bucket_name}/sample-photo.txt"
+    invoke_processor = "awslocal --region ${var.aws_region} lambda invoke --function-name ${module.photo_processor.lambda_function_name} --payload file://sample-lambda-event.json --cli-binary-format raw-in-base64-out response.json"
+    upload_file      = "awslocal --region ${var.aws_region} s3 cp .\\sample-photo.txt s3://${module.photo_processor.incoming_bucket_name}/sample-photo.txt"
   }
 }
