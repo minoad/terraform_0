@@ -21,6 +21,8 @@ override.tf.json
 # LocalStack/Docker scratch data
 volume/
 localstack-data/
+**/lambda/*.zip
+response*.json
 
 # OS/editor
 .DS_Store

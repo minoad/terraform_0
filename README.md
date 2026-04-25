@@ -37,26 +37,37 @@ You will practice:
 
 ## Project Shape
 
-Suggested repository structure:
+The repo is split into a reusable module and a local environment:
 
 ```text
 .
 ├── docker-compose.yml
-├── main.tf
-├── providers.tf
-├── variables.tf
-├── outputs.tf
-├── terraform.tfvars
-├── lambda/
-│   └── photo_processor.py
-└── modules/
-    ├── storage/
-    ├── database/
-    ├── functions/
-    └── messaging/
+├── env-localstack/
+│   ├── main.tf
+│   ├── providers.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── versions.tf
+├── module-photo-processor/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   ├── versions.tf
+│   └── lambda/
+│       └── photo_processor.py
+└── sample-photo.txt
 ```
 
-You do not need to build all of this at once. Start with one resource, apply it, inspect it, change it, and keep going.
+Run Terraform from `env-localstack`. That environment configures the AWS provider for LocalStack and calls `module-photo-processor`.
+
+The module owns the AWS-shaped resources:
+
+- S3 buckets
+- DynamoDB table
+- Lambda package and function
+- Lambda IAM role and policy
+
+That split keeps LocalStack-specific settings out of the reusable module, which makes it easier to add a real AWS environment later.
 
 ## Learning Path
 
@@ -79,17 +90,19 @@ Practice:
 Try:
 
 ```powershell
+cd env-localstack
 terraform init
 terraform plan
 terraform apply
 awslocal s3 ls
 ```
 
-This repo now starts here, with the root Terraform configuration creating:
+This repo now starts here, with `env-localstack` calling `module-photo-processor` to create:
 
 - `incoming-photos`
 - `processed-photos`
 - `photo_metadata`
+- `photo-processor`
 
 ### Level 2: Database
 
@@ -148,9 +161,9 @@ Practice:
 - Wiring resources together with ARNs and URLs
 - Adding outputs that make local testing easier
 
-### Level 6: Modules
+### Level 6: More Modules
 
-Split the configuration into modules:
+The project now has one focused module, `module-photo-processor`. Later, you can split it further if the boundaries start to feel useful:
 
 - `modules/storage`
 - `modules/database`
@@ -162,7 +175,7 @@ Practice:
 - Module inputs
 - Module outputs
 - Resource naming conventions
-- Keeping root Terraform files readable
+- Keeping environment Terraform files readable
 
 ### Level 7: Break Things on Purpose
 
@@ -208,6 +221,7 @@ docker compose down
 Terraform:
 
 ```powershell
+cd env-localstack
 terraform fmt
 terraform init
 terraform validate
@@ -230,7 +244,7 @@ awslocal sqs list-queues
 Upload a test file:
 
 ```powershell
-awslocal s3 cp .\sample-photo.txt s3://incoming-photos/sample-photo.txt
+awslocal --region us-east-1 s3 cp ..\sample-photo.txt s3://incoming-photos/sample-photo.txt
 ```
 
 Inspect processed output:
