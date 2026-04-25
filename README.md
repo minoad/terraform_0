@@ -253,6 +253,74 @@ Inspect processed output:
 awslocal s3 ls s3://processed-photos/
 ```
 
+## Local Python Testing
+
+Test the Lambda function code locally using uv (a fast Python package manager) and a virtual environment. This allows debugging without deploying to LocalStack.
+
+### Prerequisites
+- LocalStack running: `docker compose up -d`
+- Terraform resources applied: `cd env-localstack && terraform apply`
+
+### Setup
+1. Install uv (if not already installed):
+   ```powershell
+   # Using pip
+   pip install uv
+   # Or download from https://github.com/astral-sh/uv
+   ```
+
+2. Create virtual environment and install dependencies:
+   ```powershell
+   uv venv
+   .\venv\Scripts\activate
+   uv pip install boto3
+   ```
+
+### Run Tests
+1. Activate the virtual environment (if not already):
+   ```powershell
+   .\venv\Scripts\activate
+   ```
+
+2. Run the test script:
+   ```powershell
+   cd env-localstack
+   python test_lambda.py
+   ```
+
+The test simulates a Lambda invocation with sample data and verifies interaction with LocalStack DynamoDB. Check the output for success and inspect the table:
+
+```powershell
+awslocal dynamodb scan --table-name photo_metadata
+```
+
+### Notes
+- The test script (`env-localstack/test_lambda.py`) sets LocalStack endpoints automatically.
+- Modify the `sample_event` in the script for different test scenarios.
+- Deactivate the venv with `deactivate` when done.
+
+## Unit Testing
+
+Run unit tests for the Lambda function using pytest and moto (AWS service mocking).
+
+### Setup
+1. Install testing dependencies (if not already done):
+   ```powershell
+   uv pip install pytest moto
+   ```
+
+### Run Tests
+```powershell
+uv run pytest tests/ -v
+```
+
+The tests cover:
+- Handler with manual events
+- Handler with S3 events
+- Handler with empty events
+
+Tests use moto to mock DynamoDB, ensuring fast and isolated testing without LocalStack.
+
 ## Secret Scanning Hook
 
 This repo includes a lightweight pre-commit hook at `.githooks/pre-commit` that scans staged files for common secrets before Git creates a commit.
@@ -273,13 +341,12 @@ The hook checks for common tokens and credentials, including AWS keys, OpenAI ke
 
 ## CI Checks
 
-GitHub Actions runs Terraform checks on pull requests and pushes to `main`:
+GitHub Actions runs checks on pull requests and pushes to `main`:
 
-```text
-terraform fmt -check -recursive
-terraform init -backend=false
-terraform validate
-```
+- **Terraform**: `terraform fmt -check -recursive`, `terraform init -backend=false`, `terraform validate`
+- **Python**: Unit tests with `pytest`
+
+Dependabot automatically creates pull requests to update dependencies weekly.
 
 Once the workflow has run at least once on GitHub, it can be added as a required status check in the repository ruleset.
 
