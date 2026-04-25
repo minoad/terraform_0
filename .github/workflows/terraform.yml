@@ -35,3 +35,22 @@ jobs:
       - name: Terraform validate
         working-directory: env-localstack
         run: terraform validate
+
+  test-python:
+    name: Test Python code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Install Python dependencies
+        run: uv pip install --system boto3 pytest moto
+
+      - name: Run Python tests
+        run: uv run pytest tests/ -v
