@@ -17,6 +17,7 @@ resource "aws_lambda_function" "photo_processor" {
     variables = {
       METADATA_TABLE_NAME   = aws_dynamodb_table.photo_metadata.name
       PROCESSED_BUCKET_NAME = aws_s3_bucket.processed_photos.bucket
+      SNS_TOPIC_ARN         = aws_sns_topic.photo_processed.arn
     }
   }
 }

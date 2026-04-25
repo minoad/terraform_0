@@ -59,3 +59,9 @@ wheels/
 Thumbs.db
 .idea/
 .vscode/
+
+# Documentation
+docs/*.png
+docs/*.jpg
+docs/*.svg
+docs/*.pdf

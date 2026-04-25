@@ -43,6 +43,13 @@ resource "aws_iam_role_policy" "photo_processor" {
       },
       {
         Action = [
+          "sns:Publish"
+        ]
+        Effect   = "Allow"
+        Resource = aws_sns_topic.photo_processed.arn
+      },
+      {
+        Action = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
