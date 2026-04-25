@@ -251,6 +251,18 @@ git config core.hooksPath .githooks
 
 The hook checks for common tokens and credentials, including AWS keys, OpenAI keys, GitHub tokens, Slack tokens, Google API keys, private key blocks, and generic secret assignments.
 
+## CI Checks
+
+GitHub Actions runs Terraform checks on pull requests and pushes to `main`:
+
+```text
+terraform fmt -check -recursive
+terraform init -backend=false
+terraform validate
+```
+
+Once the workflow has run at least once on GitHub, it can be added as a required status check in the repository ruleset.
+
 ## Suggested Rules For Learning
 
 - Run `terraform plan` before every apply.
