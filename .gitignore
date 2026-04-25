@@ -1,5 +1,7 @@
 # Terraform
 .terraform/
+.terraform.lock.hcl
+state/
 *.tfstate
 *.tfstate.*
 crash.log
@@ -8,10 +10,16 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+.terraformrc
+terraform.rc
 
 # Terraform plans
 *.tfplan
 *.plan
+
+# Terraform variables (if sensitive)
+terraform.tfvars
+terraform.tfvars.json
 
 # Local environment
 .env
@@ -21,6 +29,30 @@ override.tf.json
 # LocalStack/Docker scratch data
 volume/
 localstack-data/
+**/lambda/*.zip
+response*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
 # OS/editor
 .DS_Store

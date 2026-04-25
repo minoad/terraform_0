@@ -27,3 +27,9 @@ variable "metadata_table_name" {
   type        = string
   default     = "photo_metadata"
 }
+
+variable "lambda_function_name" {
+  description = "Name of the photo processor Lambda function."
+  type        = string
+  default     = "photo-processor"
+}
