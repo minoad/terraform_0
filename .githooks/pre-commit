@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+blocked=0
+
+patterns=(
+  'AWS access key ID|A(KIA|SIA)[A-Z0-9]{16}'
+  'AWS secret access key|aws(.{0,20})?(secret|access)[_-]?key[^A-Za-z0-9]{1,5}[A-Za-z0-9/+=]{35,}'
+  'OpenAI API key|sk-[A-Za-z0-9_-]{20,}'
+  'GitHub token|gh[pousr]_[A-Za-z0-9_]{30,}'
+  'Slack token|xox[baprs]-[A-Za-z0-9-]{10,}'
+  'Google API key|AIza[0-9A-Za-z_-]{35}'
+  'Private key block|-----BEGIN (RSA |DSA |EC |OPENSSH |PGP )?PRIVATE KEY-----'
+  'Generic secret assignment|(password|passwd|pwd|secret|token|api[_-]?key|client[_-]?secret)[[:space:]]*[:=][[:space:]]*[A-Za-z0-9_./+=@!#$%^&*()-]{16,}'
+)
+
+skip_file() {
+  case "$1" in
+    *.png|*.jpg|*.jpeg|*.gif|*.webp|*.ico|*.pdf|*.zip|*.gz|*.tar|*.7z|*.exe|*.dll)
+      return 0
+      ;;
+  esac
+
+  return 1
+}
+
+scan_file() {
+  local file="$1"
+  local content
+
+  if skip_file "$file"; then
+    return
+  fi
+
+  if ! content="$(git show ":$file" 2>/dev/null)"; then
+    return
+  fi
+
+  for entry in "${patterns[@]}"; do
+    local name="${entry%%|*}"
+    local regex="${entry#*|}"
+    local matches
+
+    matches="$(printf '%s\n' "$content" | grep -nE "$regex" || true)"
+
+    if [ -n "$matches" ]; then
+      blocked=1
+      printf '\nPossible secret in %s (%s):\n' "$file" "$name" >&2
+      printf '%s\n' "$matches" | sed -E 's/^/  line /' >&2
+    fi
+  done
+}
+
+while IFS= read -r -d '' file; do
+  scan_file "$file"
+done < <(git diff --cached --name-only --diff-filter=ACMR -z)
+
+if [ "$blocked" -ne 0 ]; then
+  cat >&2 <<'MESSAGE'
+
+Commit blocked because staged content looks like it may contain a secret.
+
+Fix:
+  1. Remove the secret from the staged file.
+  2. Rotate the credential if it was real.
+  3. Stage the safe replacement.
+
+If this is a false positive, adjust .githooks/pre-commit deliberately and commit that change separately.
+MESSAGE
+  exit 1
+fi
+
+exit 0

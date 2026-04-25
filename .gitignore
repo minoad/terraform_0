@@ -1,0 +1,29 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform plans
+*.tfplan
+*.plan
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# LocalStack/Docker scratch data
+volume/
+localstack-data/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
