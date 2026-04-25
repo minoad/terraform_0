@@ -69,6 +69,15 @@ The module owns the AWS-shaped resources:
 
 That split keeps LocalStack-specific settings out of the reusable module, which makes it easier to add a real AWS environment later.
 
+## Documentation
+
+See the [docs/](docs/) folder for architectural diagrams and detailed documentation:
+
+- **[Architecture](docs/architecture.md)** - High-level system overview
+- **[Event Flow](docs/event-flow.md)** - Step-by-step event sequence
+- **[Complete Architecture](docs/complete-architecture.md)** - Full system with Terraform structure
+- **[Data Flow](docs/data-flow.md)** - Data transformation pipeline
+
 ## Learning Path
 
 ### Level 1: Buckets
