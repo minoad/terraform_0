@@ -346,6 +346,8 @@ GitHub Actions runs checks on pull requests and pushes to `main`:
 - **Terraform**: `terraform fmt -check -recursive`, `terraform init -backend=false`, `terraform validate`
 - **Python**: Unit tests with `pytest`
 
+Dependabot automatically creates pull requests to update dependencies weekly.
+
 Once the workflow has run at least once on GitHub, it can be added as a required status check in the repository ruleset.
 
 ## Suggested Rules For Learning
