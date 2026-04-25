@@ -41,7 +41,7 @@ scan_file() {
     local regex="${entry#*|}"
     local matches
 
-    matches="$(printf '%s\n' "$content" | grep -nE "$regex" || true)"
+    matches="$(printf '%s\n' "$content" | grep -nE -- "$regex" || true)"
 
     if [ -n "$matches" ]; then
       blocked=1
