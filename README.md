@@ -145,6 +145,8 @@ Practice:
 - Debugging event-driven systems locally
 - Understanding where Terraform configuration ends and runtime behavior begins
 
+This repo now has S3 event notifications configured! Upload a file to `incoming-photos` and watch the Lambda trigger automatically.
+
 ### Level 5: Messaging
 
 Add SNS or SQS.
